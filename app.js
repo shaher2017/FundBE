@@ -15,7 +15,9 @@ const __dirname = dirname(__filename);
 
 app.use("/images", express.static(path.join(__dirname, "images")));
 app.use(express.json());
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.use(
+  cors({ origin: "https://shaherfunds.onrender.com/", credentials: true })
+);
 app.use(cookieParser());
 mongoose
   .connect(
