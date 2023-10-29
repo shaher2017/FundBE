@@ -16,13 +16,11 @@ const __dirname = dirname(__filename);
 app.use("/images", express.static(path.join(__dirname, "images")));
 app.use(express.json());
 app.use(
-  cors({ origin: "https://shaherfunds.onrender.com/", credentials: true })
+  cors({ origin: "https://shaherfunds.onrender.com", credentials: true })
 );
 app.use(cookieParser());
 mongoose
-  .connect(
-    "mongodb+srv://shaherhero8:heroemad2018@shaherfund.rhpnnzp.mongodb.net/"
-  )
+  .connect(process.env.MONGO_URL)
   .then(() => {
     app.listen(4000);
   })
@@ -35,6 +33,7 @@ mongoose
 app.get("/", vretify_jwt, async (req, res) => {
   const clientId = process.env.CLIENT_ID,
     merchantId = process.env.MERCHANT_ID;
+  console.log("here");
   try {
     const clientToken = await paypal.generateClientToken();
     res.render("checkout", { clientId, clientToken, merchantId });

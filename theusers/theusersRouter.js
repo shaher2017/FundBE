@@ -31,6 +31,7 @@ router.post("/register", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   try {
+    console.log("reached");
     const { email, password } = req.body;
     const user = await Theuser.findOne({ email: email });
     if (!user) {
@@ -50,10 +51,11 @@ router.post("/login", async (req, res) => {
           res
             .status(201)
             .cookie("fund-token", token, {
+              secure: true,
               httpOnly: true,
               expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
             })
-            .json({ name: user.name });
+            .json({ name: user.name, token: token });
         } else {
           return res.status(403).json({ msg: "Wrong password" });
         }
@@ -78,7 +80,7 @@ router.get("/checkemail", async (req, res) => {
 });
 
 const vretify_jwt = (req, res, next) => {
-  const token = req.cookies["fund-token"];
+  const token = req.header("Authorization");
   if (!token) {
     return res.status(403).json({ msg: "Sign in first" });
   }
@@ -92,9 +94,9 @@ const vretify_jwt = (req, res, next) => {
   }
 };
 
-router.get("/logout", vretify_jwt, async (req, res) => {
-  res.status(201).clearCookie("fund-token").json({ msg: "token deleted" });
-});
+// router.get("/logout", vretify_jwt, async (req, res) => {
+//   res.status(201).clearCookie("fund-token").json({ msg: "token deleted" });
+// });
 
 router.get("/userprojects", vretify_jwt, async (req, res) => {
   const email = req.email;
